@@ -31,25 +31,27 @@ pens_df = load_penguins()
 df = pens_df.copy()
 df.index = pd.date_range(start="1/1/18", periods=len(df), freq="D")
 
-
+# title
 with st.beta_container():
     st.title("Interactive Python pandas Plotting Backend Options")
     st.write("""Basically same pandas code. 🐼""")
 
 
-# User choose user type
+# User choose user plot type
 chart_type = st.selectbox("Choose your chart type", plot_types)
 
+# layout
 with st.beta_container():
     st.subheader(f"Showing:  {chart_type}")
     st.write("")
 
-two_cols = st.checkbox("2 columns?")
+
+two_cols = st.checkbox("2 columns?", True)
 if two_cols:
     col1, col2 = st.beta_columns(2)
 
 
-# Output all the plots of the selected type for the various pandas plotting backends
+# Output all plots of selected type for the various pandas plotting backends
 def df_plot(backend: str, chart_type: str, df):
     """ return pandas plots """
 
@@ -58,15 +60,15 @@ def df_plot(backend: str, chart_type: str, df):
             {"Adelie": "blue", "Chinstrap": "orange", "Gentoo": "green"}
         )
         if backend == 'altair':
-            figgy = df.plot(
+            fig = df.plot(
                 kind="scatter",
                 x="bill_depth_mm",
                 y="bill_length_mm",
                 c="color",  
                 title="Bill Depth by Bill Length",
             )
-        else:      # color is on  the way for bokeh with pandas, it looks like
-            figgy = df.plot(
+        else:      # color is on  the way for bokeh with pandas, it appears
+            fig = df.plot(
                 kind="scatter",
                 x="bill_depth_mm",
                 y="bill_length_mm",
@@ -76,14 +78,14 @@ def df_plot(backend: str, chart_type: str, df):
 
     elif chart_type == "Histogram":
         
-        figgy = df["bill_depth_mm"].plot(
+        fig = df["bill_depth_mm"].plot(
             kind="hist",
             title="Count of Bill Depth Observations",
         )
 
     elif chart_type == "Bar":
 
-        figgy = (
+        fig = (
             df.groupby("species")
             .mean()
             .plot(
@@ -94,18 +96,20 @@ def df_plot(backend: str, chart_type: str, df):
         )
     # no boxplot for some options yet and issues
     # elif chart_type == "Boxplot":      
-    #     figgy = df.plot(kind='box', y='species')
+    #     fig = df.plot(kind='box', y='species')
 
     elif chart_type == "Line":
         
-        figgy = df.reset_index().plot(
+        fig = df.reset_index().plot(
             kind="line",
             x="index",
             y="bill_length_mm",
             title="Bill Length Over Time",
         )
 
-    return figgy
+    return fig
+
+    # to add matplotlip, check if plt, declare fig and ax, pass ax = ax
 
 
 # create plots
