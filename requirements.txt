@@ -1,6 +1,6 @@
 pandas==1.2.3
 streamlit==0.79.0
-altair_pandas==0.1.0.dev0
+-e git+https://github.com/altair-viz/altair_pandas
 matplotlib==3.4.0
 pandas_bokeh==0.5.4
 plotly==4.14.3
