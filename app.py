@@ -19,7 +19,12 @@ from bokeh.plotting import output_notebook
 st.set_page_config(layout="wide")
 
 plot_types = ("Scatter", "Histogram", "Bar", "Line")
-backends = ("plotly", "altair", "pandas_bokeh")  # hvplot "holoviews", "matplotlib",
+backends = (
+    "plotly",
+    "altair",
+    "pandas_bokeh",
+    "matplotlib",
+)  # hvplot "holoviews", "matplotlib",
 
 # get data
 @st.cache(allow_output_mutation=True)
@@ -33,8 +38,15 @@ df.index = pd.date_range(start="1/1/18", periods=len(df), freq="D")
 
 # title
 with st.beta_container():
-    st.title("Interactive Python pandas Plotting Backend Options")
-    st.write("""Basically same pandas code. 🐼""")
+    st.title("Explore Python pandas plotting backend options")
+    st.write(
+        """
+    - Most plots are interactive and downloadable.
+    - The pandas code is almost the same. 🐼 
+    - See and fork it on [GitHub](https://github.com/discdiver/pandas-plotting-backends-streamlit)
+    - A streamlit package dependency bug prevents Holoviews and hvplots from working. 
+    """
+    )
 
 
 # User choose user plot type
@@ -54,62 +66,104 @@ if two_cols:
 # Output all plots of selected type for the various pandas plotting backends
 def df_plot(backend: str, chart_type: str, df):
     """ return pandas plots """
+    if backend == "matplotlib":
+        fig, ax = plt.subplots()
+        if chart_type == "Scatter":
+            df["color"] = df["species"].replace(
+                {"Adelie": "blue", "Chinstrap": "orange", "Gentoo": "green"}
+            )
 
-    if chart_type == "Scatter":
-        df["color"] = df["species"].replace(
-            {"Adelie": "blue", "Chinstrap": "orange", "Gentoo": "green"}
-        )
-        if backend == 'altair':
-            fig = df.plot(
+            f = df.plot(
                 kind="scatter",
                 x="bill_depth_mm",
                 y="bill_length_mm",
-                c="color",  
+                c="color",
                 title="Bill Depth by Bill Length",
+                ax=ax,
             )
-        else:      # color is on  the way for bokeh with pandas, it appears
-            fig = df.plot(
-                kind="scatter",
-                x="bill_depth_mm",
+
+        elif chart_type == "Histogram":
+
+            f = df["bill_depth_mm"].plot(
+                kind="hist",
+                title="Count of Bill Depth Observations",
+                ax=ax,
+            )
+
+        elif chart_type == "Bar":
+
+            f = (
+                df.groupby("species")
+                .mean()
+                .plot(
+                    kind="bar",
+                    y="bill_depth_mm",
+                    title="Mean Bill Depth by Species",
+                    ax=ax,
+                )
+            )
+
+        elif chart_type == "Line":
+
+            f = df.reset_index().plot(
+                kind="line",
+                x="index",
                 y="bill_length_mm",
-                color="color",  
-                title="Bill Depth by Bill Length",
+                title="Bill Length Over Time",
+                ax=ax,
             )
 
-    elif chart_type == "Histogram":
-        
-        fig = df["bill_depth_mm"].plot(
-            kind="hist",
-            title="Count of Bill Depth Observations",
-        )
-
-    elif chart_type == "Bar":
-
-        fig = (
-            df.groupby("species")
-            .mean()
-            .plot(
-                kind="bar",
-                y="bill_depth_mm",
-                title="Mean Bill Depth by Species",
+    else:  # not matplotlib
+        if chart_type == "Scatter":
+            df["color"] = df["species"].replace(
+                {"Adelie": "blue", "Chinstrap": "orange", "Gentoo": "green"}
             )
-        )
-    # no boxplot for some options yet and issues
-    # elif chart_type == "Boxplot":      
-    #     fig = df.plot(kind='box', y='species')
+            if backend == "altair":
+                fig = df.plot(
+                    kind="scatter",
+                    x="bill_depth_mm",
+                    y="bill_length_mm",
+                    c="color",
+                    title="Bill Depth by Bill Length",
+                )
+            else:  # color is on  the way for bokeh with pandas, it appears
+                fig = df.plot(
+                    kind="scatter",
+                    x="bill_depth_mm",
+                    y="bill_length_mm",
+                    color="color",
+                    title="Bill Depth by Bill Length",
+                )
 
-    elif chart_type == "Line":
-        
-        fig = df.reset_index().plot(
-            kind="line",
-            x="index",
-            y="bill_length_mm",
-            title="Bill Length Over Time",
-        )
+        elif chart_type == "Histogram":
+
+            fig = df["bill_depth_mm"].plot(
+                kind="hist",
+                title="Count of Bill Depth Observations",
+            )
+
+        elif chart_type == "Bar":
+
+            fig = (
+                df.groupby("species")
+                .mean()
+                .plot(
+                    kind="bar",
+                    y="bill_depth_mm",
+                    title="Mean Bill Depth by Species",
+                )
+            )
+
+        elif chart_type == "Line":
+
+            fig = df.reset_index().plot(
+                kind="line",
+                x="index",
+                y="bill_length_mm",
+                title="Bill Length Over Time",
+            )
 
     return fig
-
-    # to add matplotlip, check if plt, declare fig and ax, pass ax = ax
 
 
 # create plots
@@ -133,12 +187,12 @@ def show_plot(backend: str):
 
 # output plots
 if two_cols:
-    # with col1:
-    #    show_plot(backend="matplotlib")
     with col1:
+        st.write("Plotly")
         pd.options.plotting.backend = "plotly"
         show_plot(backend="plotly")
     with col2:
+        st.write("Altair")
         pd.options.plotting.backend = "altair"
         show_plot(backend="altair")
     # with col2:
@@ -146,14 +200,20 @@ if two_cols:
     # with col1:
     #     show_plot(backend="hvplot")
     with col1:
+        st.write("Bokeh (pandas_bokeh)")
         pd.options.plotting.backend = "pandas_bokeh"
-        output_notebook()         # required so you don't open new browser tabs ever run
+        output_notebook()  # required so you don't open new browser tabs ever run
         show_plot(backend="pandas_bokeh")
+    with col2:
+        st.write("Matplotlib")
+        pd.options.plotting.backend = "matplotlib"
+        show_plot(backend="matplotlib")
+
 else:
     with st.beta_container():
         for backend in backends:
             pd.options.plotting.backend = backend
-            output_notebook()         # required so you don't open new browser tabs ever run
+            output_notebook()  # required so you don't open new browser tabs ever run
             show_plot(backend=backend)
 
 # display data
