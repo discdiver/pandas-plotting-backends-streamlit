@@ -168,13 +168,14 @@ with st.beta_container():
     st.write(
         """
         - This app uses [Streamlit](https://streamlit.io/) and the [Palmer Penguins](https://allisonhorst.github.io/palmerpenguins/) dataset.      
-        - To see the full code check out the [GitHub repo]
+        - To see the full code check out the [GitHub repo](https://github.com/discdiver/pandas-plotting-backends-streamlit)
         - Lineplots should have sequence data, so I created a date index with a sequence of dates for them. 
         - You can choose to see two columns, but with a narrow screen this will switch to one column automatically.
         - The pandas plotting API is not fully supported by these plotting backend libraries, 
-        which is unfortunate because learning one plotting API would be nicer than learning a half-dozen. 😀 
+        which is unfortunate because learning one plotting API would be nicer than learning a half-dozen. 😀
+        - Check out my example with a half-dozen Python plotting libraries and code [here](https://share.streamlit.io/discdiver/pandas-plotting-backends-streamlit/main/app.py).
         
-        Made by Jeff Hale. 
+        Made by [Jeff Hale](https://www.linkedin.com/in/-jeffhale/). 
         
         Subscribe to my [Data Awesome newsletter](https://dataawesome.com) for the latest tools, tips, and resources.
         """
