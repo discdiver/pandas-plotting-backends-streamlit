@@ -4,10 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import altair_pandas  # not just altair
 import seaborn as sns
+import altair
 
-# import hvplot         dependency  conflict with bokeh breaks if 2.2.3 so have to use 2.2.2
-# import hvplot.pandas
-# import holoviews
+import hvplot
+import hvplot.pandas
+import holoviews
 import pandas_bokeh
 import plotly
 import plotly.express
@@ -23,8 +24,10 @@ backends = (
     "plotly",
     "altair",
     "pandas_bokeh",
+    # "hvplot",
+    #  "holoviews",
     "matplotlib",
-)  # hvplot "holoviews", "matplotlib",
+)
 
 # get data
 @st.cache(allow_output_mutation=True)
@@ -37,35 +40,41 @@ df = pens_df.copy()
 df.index = pd.date_range(start="1/1/18", periods=len(df), freq="D")
 
 # title
-with st.beta_container():
+with st.container():
     st.title("Explore Python pandas plotting backend options")
     st.write(
         """
     - Most plots are interactive and downloadable.
-    - The pandas code is almost the same. 🐼 
-    - See and fork it on [GitHub](https://github.com/discdiver/pandas-plotting-backends-streamlit)
-    - A streamlit package dependency bug prevents Holoviews and hvplots from working. 
+    - The pandas code is almost the same for each plot. 🐼 
+    - See and fork the code on [GitHub](https://github.com/discdiver/pandas-plotting-backends-streamlit)
+    
     """
     )
 
-
-# User choose user plot type
 chart_type = st.selectbox("Choose your chart type", plot_types)
 
 # layout
-with st.beta_container():
+with st.container():
     st.subheader(f"Showing:  {chart_type}")
     st.write("")
 
 
-two_cols = st.checkbox("2 columns?", True)
-if two_cols:
-    col1, col2 = st.beta_columns(2)
+# two_cols = st.checkbox("2 columns?", True)
+# if two_cols:
+#     col1, col2 = st.columns(2)
 
 
 # Output all plots of selected type for the various pandas plotting backends
-def df_plot(backend: str, chart_type: str, df):
-    """ return pandas plots """
+def df_plot(backend: str, chart_type: str, df: pd.DataFrame):
+    """return pandas plots
+    
+    Args:
+        backend: plotting library 
+        chart_type: type of plot
+        df: penguins data
+    """
+
+
     if backend == "matplotlib":
         fig, ax = plt.subplots()
         if chart_type == "Scatter":
@@ -184,40 +193,45 @@ def show_plot(backend: str):
     elif backend == "pandas_bokeh":
         st.bokeh_chart(plot, use_container_width=True)
 
+    # output plots
+    # if two_cols:
+    #     with col1:
+    #         st.write("Plotly")
+    #         pd.options.plotting.backend = "plotly"
+    #         show_plot(backend="plotly")
+    #     with col2:
+    #         st.write("Altair")
+    #         pd.options.plotting.backend = "altair"
+    #         show_plot(backend="altair")
+    #     # with col2:
+    #     #     show_plot(backend="holoviews")
+    #     # with col1:
+    #     #     show_plot(backend="hvplot")
+    #     # # with col1:
+    #         # st.write("Bokeh (pandas_bokeh)")
+    #         # pd.options.plotting.backend = "pandas_bokeh"
+    #         # output_notebook()  # required so you don't open new browser tabs every run
+    #         # show_plot(backend="pandas_bokeh")
+    #     with col2:
+    #         st.write("Matplotlib")
+    #         pd.options.plotting.backend = "matplotlib"
+    #         show_plot(backend="matplotlib")
+    #     with col1:
+    #         st.write("Bokeh")
+    #         pd.options.plotting.backend = "pandas_bokeh"
+    #         show_plot(backend="pandas_bokeh")
 
-# output plots
-if two_cols:
-    with col1:
-        st.write("Plotly")
-        pd.options.plotting.backend = "plotly"
-        show_plot(backend="plotly")
-    with col2:
-        st.write("Altair")
-        pd.options.plotting.backend = "altair"
-        show_plot(backend="altair")
-    # with col2:
-    #     show_plot(backend="holoviews")
-    # with col1:
-    #     show_plot(backend="hvplot")
-    with col1:
-        st.write("Bokeh (pandas_bokeh)")
-        pd.options.plotting.backend = "pandas_bokeh"
-        output_notebook()  # required so you don't open new browser tabs ever run
-        show_plot(backend="pandas_bokeh")
-    with col2:
-        st.write("Matplotlib")
-        pd.options.plotting.backend = "matplotlib"
-        show_plot(backend="matplotlib")
-
-else:
-    with st.beta_container():
+    # else:
+    with st.container():
         for backend in backends:
+            st.write(backend.title().split("_")[-1])
             pd.options.plotting.backend = backend
             output_notebook()  # required so you don't open new browser tabs ever run
             show_plot(backend=backend)
 
+
 # display data
-with st.beta_container():
+with st.container():
     show_data = st.checkbox("See the raw data?")
 
     if show_data:
@@ -229,11 +243,9 @@ with st.beta_container():
         """
         - This app uses [Streamlit](https://streamlit.io/) and the [Palmer Penguins](https://allisonhorst.github.io/palmerpenguins/) dataset.      
         - To see the full code check out the [GitHub repo](https://github.com/discdiver/pandas-plotting-backends-streamlit)
-        - Lineplots should have sequence data, so I created a date index with a sequence of dates for them. 
-        - You can choose to see two columns, but with a narrow screen this will switch to one column automatically.
-        - The pandas plotting API is not fully supported by these plotting backend libraries, 
-        which is unfortunate because learning one plotting API would be nicer than learning a half-dozen. 😀
-        - Check out my example with a half-dozen Python plotting libraries and code [here](https://share.streamlit.io/discdiver/pandas-plotting-backends-streamlit/main/app.py).
+        - Lineplots should be used with sequence data, so I created a date index with a sequence of dates for plotting. 
+        - The pandas plotting API is not fully supported by these plotting backend libraries, which is unfortunate because learning one plotting API would be nicer than learning a half-dozen. 😀
+        - Check out my example app with a half-dozen Python plotting libraries and code [here](https://share.streamlit.io/discdiver/pandas-plotting-backends-streamlit/main/app.py).
         
         Made by [Jeff Hale](https://www.linkedin.com/in/-jeffhale/). 
         
