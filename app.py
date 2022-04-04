@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import altair_pandas  # not just altair
 import seaborn as sns
 import altair
-# import hvplot         
+
+# import hvplot
 # import hvplot.pandas
 # import holoviews
 import pandas_bokeh
@@ -193,13 +194,13 @@ with st.container():
     st.write(
         """
         - This app uses [Streamlit](https://streamlit.io/) and the [Palmer Penguins](https://allisonhorst.github.io/palmerpenguins/) dataset.      
-        - To see the full code check out the [GitHub repo](https://github.com/discdiver/pandas-plotting-backends-streamlit)
+        - See the full code and check out the [GitHub repo](https://github.com/discdiver/pandas-plotting-backends-streamlit)
         - The pandas code is almost the same for each plot. 🐼 
-        - See and fork the code on [GitHub](https://github.com/discdiver/pandas-plotting-backends-streamlit)
         - Lineplots should be used with sequence data, so I created a date index with a sequence of dates for plotting. 
-        - The pandas plotting API is not fully supported by these plotting backend libraries, which is unfortunate because learning one plotting API would be nicer than learning a half-dozen. 😀
+        - The pandas plotting API is not fully supported by these plotting backend libraries.
+
           
-        Made by [Jeff Hale](https://www.linkedin.com/in/-jeffhale/). 
+        Made by [Jeff Hale](https://jeffhale.net). 
         
         Subscribe to my [Data Awesome newsletter](https://dataawesome.com) for the latest tools, tips, and resources.
         """
