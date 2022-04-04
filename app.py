@@ -5,10 +5,9 @@ import matplotlib.pyplot as plt
 import altair_pandas  # not just altair
 import seaborn as sns
 import altair
-
-import hvplot
-import hvplot.pandas
-import holoviews
+# import hvplot         
+# import hvplot.pandas
+# import holoviews
 import pandas_bokeh
 import plotly
 import plotly.express
@@ -23,8 +22,8 @@ backends = (
     "plotly",
     "altair",
     "pandas_bokeh",
-    # "hvplot",
-    # "holoviews",
+    # "hvplot",    # glitchy
+    # "holoviews", # glitchy
     "matplotlib",
 )
 
