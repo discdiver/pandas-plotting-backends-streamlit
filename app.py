@@ -94,7 +94,7 @@ def df_plot(backend: str, chart_type: str, df: pd.DataFrame):
 
         elif chart_type == "Line":
 
-            df = df.reset_index().plot(
+            f = df.reset_index().plot(
                 kind="line",
                 x="index",
                 y="bill_length_mm",
@@ -180,11 +180,10 @@ def show_plot(backend: str):
 for backend in backends:
     st.subheader(backend.title().split("_")[-1])
     pd.options.plotting.backend = backend
-    output_notebook()  # required so you don't open new browser tabs ever run
+    output_notebook()  # required so you don't open new browser tabs every run
     show_plot(backend=backend)
 
 
-# display data option
 with st.container():
     show_data = st.checkbox("See the raw data?")
 
